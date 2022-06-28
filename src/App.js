@@ -7,6 +7,7 @@ import SignUp from './SignUp';
 import Font from 'react-font'
 import ConfirmPage from './Confirmpage';
 import EdituserInfo from './EdituserInfo';
+import EditComplete from './EditComplete';
 
 const App = () => {
   return (
@@ -60,6 +61,22 @@ const App = () => {
                       
           }}>BRIPHY</Link>
           <EdituserInfo/>
+            </main>
+          } />  
+
+          <Route path="/editComplete" element={
+            <main style={{ color:"white" }}>
+            <Link to="/" 
+             style={{ textDecoration: 'none',
+                      textAlign:"left", 
+                      position: 'relative', 
+                      left:'20px',
+                      color:"white",
+                      fontSize:"230%",
+                      fontWeight:'750',
+                      
+          }}>BRIPHY</Link>
+          <EditComplete/>
             </main>
           } />  
 

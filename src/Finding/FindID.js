@@ -13,6 +13,7 @@ const FindID = () =>
     // const [phone,setPhone] = useState("");
     const [find,setFind] = useState({}) //이름과 폰번호를 한번에 객체로 저장할 예정
     const {register,formState:{errors},handleSubmit} = useForm();
+    const savedInfo= JSON.parse(localStorage.getItem('user'));
     
     useEffect(()=>{
         if(!isObjEmpty(find)){
@@ -60,12 +61,12 @@ const FindID = () =>
     //popup창 뜨게 하는 것
     const getFind=()=>
     {
-        if(find.name===("박지지"))
+        if(find.name===savedInfo.name && find.phone === savedInfo.phone)
         {
             const id=toast("", {autoClose:0.3})
-            toast.update(id,{ render: `회원가입시 사용한 아이디는 : < ${find.name} > 입니다` ,type:"success" },
+            toast.update(id,{ render: `회원가입시 사용한 아이디는 : < ${savedInfo.id} > 입니다` ,type:"success" },
             {
-                autoClose:5000,
+                autoClose:3000,
                 closeOnClick:true,
                 pauseOnHover:true,
                 draggable:true,
@@ -123,7 +124,8 @@ const FindID = () =>
                 // onChange={phoneHandler}
                 {...register("phone",{
                     required:true,
-                    pattern: /[0-9]/g
+                    pattern: /[0-9]/g,
+                    maxLength:{value:11}
                 })}
             >
             </Inputbox>
@@ -132,6 +134,9 @@ const FindID = () =>
             
             {errors.phone && errors.phone.type==="pattern" &&
                 <FormError message="⚠ 숫자만 입력 가능합니다"/>}
+
+            {errors.phone && errors.phone.type==="maxLength" &&
+                <FormError message="⚠ 전화번호 양식에 맞지않습니다"/>}
            
             <br/>
             <br />
@@ -166,18 +171,6 @@ const Container = styled.div`
 
 
 `
-// const BackLogo = styled.img.attrs({src: `${logo}`}) `
-//     width:100px;
-//     height:100px;
-//     background-size:contain;
-// `
-
-// const BackLogo = styled.div`
-//     background-image:url(${logo});
-//     width:500px;
-//     height:500px;
-//     border: 1px solid #000;
-// `
 
 
 const Wrapper = styled.div`

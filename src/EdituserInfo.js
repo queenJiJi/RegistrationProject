@@ -37,7 +37,7 @@ function EdituserInfo()
         }
     }
 
-    //localSTorage에서 정보 불러오기
+    //localStorage에서 정보 불러오기
     const getUser=()=>
     { 
       console.log("userInfois:",getuserInfo);
@@ -60,7 +60,7 @@ function EdituserInfo()
             }
             saveUser(elem);
             completedPopup(elem.name);
-            navigate('/confirm');
+            navigate('/editComplete');
         }
         else return "something went wrong";
     }  
@@ -160,18 +160,19 @@ function EdituserInfo()
             <Inputbox 
                 name="editPW"
                 id="editPW"
+                type="password"
                 placeholder="비밀번호를 입력하세요" 
                 // defaultValue={userData.pw}
 
                 {...register("editPW",{
-                    // required:true,
+                    required:true,
                     maxLength:{value:6}
                 })}
 
             >
             </Inputbox>
-            {/* {errors.editPW && errors.editPW.type==="required" && 
-                <FormError message="⚠ 필수로 입력하셔야 합니다"/>} */}
+            {errors.editPW && errors.editPW.type==="required" && 
+                <FormError message="⚠ 필수로 입력하셔야 합니다"/>}
             
             {errors.editPW && errors.editPW.type==="maxLength" &&
                 <FormError message="⚠ 비밀번호는 6글자 이하여야 합니다"/>}
@@ -184,6 +185,8 @@ function EdituserInfo()
                 name="confirmPW"
                 placeholder="비밀번호를 다시 입력하세요" 
                 id="confirmPW"
+                type="password"
+
                 {...register("confirmPW",{
                     required:true,
                     validate: (value)=>((value) === password.current)
