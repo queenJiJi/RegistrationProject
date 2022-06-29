@@ -21,9 +21,6 @@ function Find() {
 
   return (
       <div>
-          {/* <form 
-            
-           > */}
             <Button 
                 className={idOn? "active" : null} 
                 onClick={clickHandler} 
@@ -44,7 +41,11 @@ function Find() {
             {clickVal === 'PW' ? <FindPW /> : ''} 
                 위 두개랑 아래 한 줄이랑 같음
             */}
+
+            <FindID />
             {clickVal === 'ID' ? <FindID /> : (clickVal === 'PW' ? <FindPW/> : '')}
+
+            
       </div>
  );
 }

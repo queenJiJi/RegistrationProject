@@ -30,8 +30,8 @@ const FindPW = () =>
         if(!isObjEmpty(data)){
             localStorage.setItem("findPW",JSON.stringify(data));
             setFind(data);
-            console.log("data is : ", data);
-            console.log("find is : ", find)
+            // console.log("data is : ", data);
+            // console.log("find is : ", find)
         }
     }
 
@@ -45,8 +45,8 @@ const FindPW = () =>
                 phone: val.phone
             }
             saveFind(elem);
-            console.log(val);
-            console.log(elem.findID)
+            // console.log(val);
+            // console.log(elem.findID)
             //getFind() -> 함수에서 벗어나지 않으면 saveFind의 변경사항이 아직 적용되지않아서 사용할수없음
         }
        
@@ -54,29 +54,33 @@ const FindPW = () =>
 
     //popup창 뜨게 하는 것
     const getFind=()=>
-    {
-        if(find.findID===savedInfo.id && find.name===savedInfo.name && find.phone === savedInfo.phone)
+    {   
+        if(!isObjEmpty(savedInfo))
         {
-            const id=toast("", {autoClose:0.3})
-            toast.update(id,{ render: `회원가입시 사용한 비밀번호는 : < ${savedInfo.pw} > 입니다` ,type:"success" },
+            if(find.findID===savedInfo.id && find.name===savedInfo.name && find.phone === savedInfo.phone)
             {
-                autoClose:3000,
-                closeOnClick:true,
-                pauseOnHover:true,
-                draggable:true,
-            });
+                const id=toast("", {autoClose:0.3})
+                toast.update(id,{ render: `회원가입시 사용한 비밀번호는 : < ${savedInfo.pw} > 입니다` ,type:"success" },
+                {
+                    autoClose:3000,
+                    closeOnClick:true,
+                    pauseOnHover:true,
+                    draggable:true,
+                });
+            }
+       
+            else{
+                // Popup.alert("Sorry, We couldn't find your ID!!")
+                toast.error("해당 비밀번호를 찾을 수 없습니다",
+                {
+                    autoClose:1000,
+                    closeOnClick:true,
+                    pauseOnHover:true,
+                    draggable:true,
+                });
+            }
         }
-   
-        else{
-            // Popup.alert("Sorry, We couldn't find your ID!!")
-            toast.error("해당 비밀번호를 찾을 수 없습니다",
-            {
-                autoClose:1000,
-                closeOnClick:true,
-                pauseOnHover:true,
-                draggable:true,
-            });
-        }
+        else{ alert("등록된 회원정보가 없습니다.\n회원가입을 해주시기 바랍니다");};
     }
 
 
