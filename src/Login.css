@@ -7,6 +7,7 @@ body{
 }
 
 .App {
+  /* background-color: black; */
   background-color: black;
   min-height: 100vh;
   display: flex;
@@ -44,6 +45,13 @@ form {
   margin-left: 30px;
 }
 
+#pwdWarn{
+  color:white;
+  margin-top:-38px;
+  display:block;
+  margin-left: 30px;
+}
+
 #warn::before{
   /* display:inline; */
   content:"⚠ ";
@@ -52,24 +60,14 @@ form {
   font-size:13px;
 }
 
-
-
-/* div{
-  background-color: aqua;
-  position: relative;
-  margin-top:5px;
-  margin-bottom: 30px;
-} */
-
-.remember{
-  background-color: peru;
-  /* position: relative; */
-  /* margin-top:50px;
-  padding-top:50px;
-  margin-bottom: 130px; */
-  position: absolute;
-  margin-top:50px;
+#pwdWarn::before{
+  /* display:inline; */
+  content:"⚠ ";
+  color:red;
+  display:inline;
+  font-size:13px;
 }
+
 
  
 /* input */
@@ -100,22 +98,19 @@ input[name="ID"],input[name="password"]
 
 label{
   font-size:12px;
-  top:-10px;
+  position: relative;
+  top: -2px;
+  left: 14px;
 }
 
 #find{
   color:red;
   text-align: right;
-  /* position: absolute;
-  top: 2px;
-  right: 5px; */
   font-size:12px;
-
-  /* background-color: peru; */
   position: relative;
   margin-left: 150px;
   margin-right:15px;
-
+  bottom: 1px;
 }
 
 
@@ -153,17 +148,26 @@ input[type=button]:hover
 #remember
 {
   transform: scale(1.5);
+  position: relative;
+  left: 10px;
 }
 
-/* @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-} */
+.eyepic
+{
+  position: relative;
+  left: -2px;
+  width: 30px;
+  height: 24px;
+  bottom: -2px;
+}
 
-/* #modal{
-  font-family:"Jua"
-} */
+.closedEyepic
+{
+  position: relative;
+  left: -3px;
+  width: 30px;
+  height: 24px;
+  bottom: -2px;
+}
+
+

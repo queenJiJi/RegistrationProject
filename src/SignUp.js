@@ -385,9 +385,11 @@ const Contentbox = styled.div`
 
     .confirmPW {left:-26%}
 
-    .signupGender {left:-33%}
+    .signupGender {left:-33.5%}
 
     .signupPhone {left:-30%}
+
+    .signupID {left:-32%}
 
 `
 

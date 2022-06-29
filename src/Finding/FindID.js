@@ -229,7 +229,11 @@ const Contentbox = styled.div`
     }
 
     .findName{
-        right:35%
+        left:-30%
+    }
+
+    .findPhone{
+        left:-27%
     }
 
 `

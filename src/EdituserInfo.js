@@ -304,9 +304,11 @@ const Contentbox = styled.div`
 
     .confirmPW {left:-26%}
 
-    .editGender {left:-33%}
+    .editGender {left:-33.5%}
 
     .editPhone {left:-30%}
+
+    .editID {left:-32%}
 
 `
 

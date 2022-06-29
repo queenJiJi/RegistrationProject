@@ -216,9 +216,9 @@ const Contentbox = styled.div`
     right: 32%;
     }
 
-    .findName{ right:35%}
-
-    .findID{ right:33% }
+    .findID{ left:-28%}
+    .findName{ left:-30%}
+    .findPhone{ left:-27%}
 
 `
 

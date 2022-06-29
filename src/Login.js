@@ -1,10 +1,13 @@
 import briphylogo from './briphylogo.png';
+import eyepic from './Components/eye.png';
+import closedEyepic from './Components/closedeye.png'
 import {useForm} from 'react-hook-form';
 import React,{useEffect, useState} from 'react';
 import Modal from './Components/Modal';
 import './Login.css';
 import Font from 'react-font';
 import {Link} from 'react-router-dom';
+import styled from 'styled-components';
 
 const Login = ()=> {
 
@@ -14,14 +17,8 @@ const Login = ()=> {
   const [showmodal,setShowmodal]=useState(false);
   const [loginSuccess,setloginSuccess] = useState(false);
   let YN = true;
-
-  const [showpw,setShowpw] = useState({password: "",
-                                       showPassword:false, 
-                                      })
-
-  const clickShowPW=()=> {
-    setShowpw({...showpw,showPassword:!showpw.showPassword});
-  }       
+  const [eye,setEye] = useState(true);
+  const [inputType,setinputType] = useState("password");
 
   //showing the pop up modal
   const openModal = (YN)=>
@@ -36,6 +33,7 @@ const Login = ()=> {
       setloginSuccess(false);
     }
   }
+
 
   //change and set the timer for the modal pop up
     //showmodal이 true일 때만 setTimeout작동.
@@ -55,9 +53,28 @@ const Login = ()=> {
     else return Object.keys(obj).length === 0
   }
 
-  //cick toggle method
+  //click toggle method
   const handleClick=()=>{
     setChecked(!checked);}
+  
+  //Eyeclick toggle method
+  const eyeClicked=()=> 
+  {
+    setEye(!eye);
+    inputTypeSetter()
+    console.log("input type is:",inputType);
+  }
+
+  const inputTypeSetter =()=>
+  {
+    if(eye===true)
+    {
+      setinputType("text");
+    }
+    else{
+      setinputType("password");
+    }
+  }
   
   const saveID = (val)=>
   {
@@ -136,70 +153,81 @@ const Login = ()=> {
     <div className="App">
         <img src={briphylogo} className="App-logo" alt="logo" />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <input 
-          name="ID"
-          placeholder="아이디를 입력하세요"
-          id="ID"
-          // autoFocus="autoFocus"
-          {...register("ID",
-          {
-            required:true,
-            maxLength:{value:8},
-          })}
-        />
-        {errors.ID && errors.ID.type==="required" && <p id="warn">필수로 입력하셔야 합니다.</p>}
-        {errors.ID && errors.ID.type==="maxLength" && <p id="warn">아이디를 올바르게 입력하세요</p>}
-         {/* 여기서 마지막 <p></p>부분은 항상 참일테니까(그냥 선언문이니까) 앞에서 모두true면 뜰것이고, 하나라도 false면 안뜰것임  */}
-        <br />
+        <div>
 
-        <input 
-          name="password"
-          type="password"
-          placeholder="비밀번호를 입력하세요"
-          id="password"
+          <div className="inputBoxes">
+            <input 
+              name="ID"
+              placeholder="아이디를 입력하세요"
+              id="ID"
+              {...register("ID",
+              {
+                required:true,
+                maxLength:{value:8},
+              })}
+            />
+            {errors.ID && errors.ID.type==="required" && <p id="warn">필수로 입력하셔야 합니다.</p>}
+            {errors.ID && errors.ID.type==="maxLength" && <p id="warn">아이디를 올바르게 입력하세요</p>}
+            {/* 여기서 마지막 <p></p>부분은 항상 참일테니까(그냥 선언문이니까) 앞에서 모두true면 뜰것이고, 하나라도 false면 안뜰것임  */}
+            <br />
+            
+            <div>
+              <input 
+                name="password"
+                // {eye===true?type="text":type="password"}
+                type={inputType}
+                placeholder="비밀번호를 입력하세요"
+                id="password"
 
-          {...register("password",{
-              required:true
-          })}
-        />
-        {errors.password && errors.password.type==="required" && <p id="warn">필수로 입력하셔야 합니다.</p>}
+                {...register("password",{
+                    required:true
+                })} />
+              <Eyebtn type="button" onClick={eyeClicked}> 
+                {eye===true? <img src={eyepic} className="eyepic" alt="eyepic" /> :
+                            <img src={closedEyepic} className="closedEyepic" alt="closedEyepic" />} 
+              </Eyebtn>
+              {errors.password && errors.password.type==="required" && <p id="pwdWarn">필수로 입력하셔야 합니다.</p>}
+            </div>
+          </div>
+          <br />
+          <div>
 
+            <DownWrapper>
+            <div className="remeber">
+              <input 
+                name="remember"
+                type="checkbox"
+                id="remember"
+                checked={checked}
+                onChange={handleClick}
+              /> <label htmlFor="remember">기억하기</label>
+            
+                <a href="/find" id="find">아이디/비밀번호 찾기</a>
+            
+            </div>
 
-        <br />
+            <input 
+              name="log-in"
+              type="submit"
+              value="로그인하기"
+              id="log-in"
 
-        <div className="remeber">
-          <input 
-            name="remember"
-            type="checkbox"
-            id="remember"
-            checked={checked}
-            onChange={handleClick}
-          /> <label htmlFor="remember">기억하기</label>
-         
-             <a href="/find" id="find">아이디/비밀번호 찾기</a>
-         
+              onClick={checked===true? saveID : nullFn}
+            /> 
+
+            <input 
+              name="register"
+              type="button"
+              value="회원가입하기"
+              id="register"
+
+              onClick={()=>window.open("http://localhost:3000/register")}
+            />
+
+            {/* {checked===false?localStorage.getItem("ID"):"something went wrong" } */}
+            </DownWrapper>
+          </div>
         </div>
- 
-
-        <input 
-          name="log-in"
-          type="submit"
-          value="로그인하기"
-          id="log-in"
-
-          onClick={checked===true? saveID : nullFn}
-        /> 
-
-        <input 
-           name="register"
-           type="button"
-           value="회원가입하기"
-           id="register"
-
-           onClick={()=>window.open("http://localhost:3000/register")}
-        />
-
-        {/* {checked===false?localStorage.getItem("ID"):"something went wrong" } */}
       </form>
 
       <div><Font family='Jua'>
@@ -213,4 +241,21 @@ const Login = ()=> {
   );
 }
 
+const Eyebtn = styled.button`
+  position: relative;
+  bottom: 44px;
+  left: 301px;
+  width: 38px;
+  height: 33.5px;
+  border-radius: 4px;
+  border: 0.4px solid black;
+  background: white;
+`
+
+const DownWrapper =styled.div`
+  // background:peru;
+  margin-top:-20px;
+`
+
 export default Login;
+
