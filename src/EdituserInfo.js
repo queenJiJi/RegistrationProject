@@ -7,6 +7,10 @@ import { useNavigate } from "react-router-dom";
 import FormError from "./Components/FormError";
 import * as React from 'react';
 import Font from 'react-font';
+import {Eye,EyeOff} from 'react-feather';
+import {InputGroup} from 'reactstrap';
+
+
 
 function EdituserInfo()
 {
@@ -21,6 +25,38 @@ function EdituserInfo()
     password.current= watch("editPW");
     
     const getuserInfo =JSON.parse(localStorage.getItem("user"));
+
+    const [iconVisible,setIconVisible] = useState(false);
+    const [inputType,setInputType] = useState("");
+    const renderEyeIcon=()=>
+    {
+        console.log("rendered eyeIcon success")
+        if(iconVisible===false)
+        {   
+            return <EyeOff size="14"/>
+        }
+        else{
+            return <Eye size="14"/>
+        }
+    }
+
+    //eyeIcon Click했을때
+    const eyeIconSetter=()=>
+    {
+        if(iconVisible===false){
+            setInputType("password");
+        }
+        else{
+            setInputType("text")
+        }
+    }
+    
+    const eyeClicked=()=>
+    {
+        setIconVisible(!iconVisible);
+        eyeIconSetter();
+    }
+
 
 
     //phoneCheckYn if the object is empty
@@ -157,27 +193,29 @@ function EdituserInfo()
 
             <label htmlFor="editPW" className="editPW"> 🍀 비밀번호 </label>
             <div></div>
-            <Inputbox 
-                name="editPW"
-                id="editPW"
-                type="password"
-                placeholder="비밀번호를 입력하세요" 
-                // defaultValue={userData.pw}
-
-                {...register("editPW",{
-                    required:true,
-                    maxLength:{value:6}
-                })}
-
-            >
-            </Inputbox>
-            {errors.editPW && errors.editPW.type==="required" && 
+            <div>
+                <InputGroup> 
+                    <Inputbox
+                        style={{width:'65%'}} 
+                        placeholder="비밀번호를 입력하세요"
+                        name="editPW"
+                        id="editPW"
+                        type={inputType}
+                           {...register("editPW",{
+                               required:true,
+                               maxLength:{value:6}
+                        })}
+                    />
+                    <Button type="button" onClick={eyeClicked}>
+                        {renderEyeIcon()}
+                    </Button>
+                </InputGroup>
+                {errors.editPW && errors.editPW.type==="required" && 
                 <FormError message="⚠ 필수로 입력하셔야 합니다"/>}
-            
-            {errors.editPW && errors.editPW.type==="maxLength" &&
+                {errors.editPW && errors.editPW.type==="maxLength" &&
                 <FormError message="⚠ 비밀번호는 6글자 이하여야 합니다"/>}
-            <br/>
-            <br />
+            </div>
+            <br />            
 
             <label htmlFor="confirmPW" className="confirmPW"> 🍀 비밀번호 재확인 </label>
             <div></div>
@@ -237,7 +275,7 @@ function EdituserInfo()
             </div>
                 
 
-            <Button type="submit">저장하기</Button>
+            <RegisterBtn type="submit">저장하기</RegisterBtn>
            
             </Contentbox>
 
@@ -328,19 +366,34 @@ const Inputbox = styled.input`
 `
 
 
-const Button = styled.button`
+const Button= styled.button`
+    border-radius: 3px;
+    border: 3px solid darkgrey;
+    width: 30px;
+    height: 35px;
+
+    text-align: center;
+    justify-items:center;
+
+    img{
+        width:15px;
+        height:15px;
+    }
+`
+
+
+const RegisterBtn = styled.button`
     width: 50%;
-    height: 45px;
+    height: 48px;
     border-radius: 24px;
     background: #F08080;
     color: #fff;
     margin-top: 20px;
-    font-size:23px;
+    font-size:20px;
     border: 1px solid #BD5E7A;
     &:hover{
         background:#ea657c;
     }
-    font-family:"Jua";
 `
 
 const Genderselection = styled.select`

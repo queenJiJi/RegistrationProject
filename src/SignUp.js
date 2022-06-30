@@ -2,12 +2,15 @@ import {useEffect, useState,useRef} from "react";
 import styled from 'styled-components';
 import {ToastContainer,toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {useForm} from 'react-hook-form';
+import {Controller, useForm} from 'react-hook-form';
 import { useNavigate } from "react-router-dom";
 import FormError from "./Components/FormError";
 import * as React from 'react';
-// import {ConfirmPage} from './Confirmpage'
-
+import {FormFeedback, Input,InputGroup,InputGroupText} from 'reactstrap';
+import openEye from './Components/eye.png'
+import closedeye from './Components/closedeye.png'
+import TogglePW from "./Components/TogglePW";
+import {Eye,EyeOff} from 'react-feather';
 
 function SignUp() 
 {   
@@ -15,7 +18,7 @@ function SignUp()
     // navigate('/confirmPage');
     
     const [user,setUser] = useState() 
-    const {register,watch,formState:{errors},handleSubmit} = useForm();
+    const {register,watch,formState:{errors},handleSubmit,control} = useForm();
     const [ok,setOk] = useState(false);
     const password=useRef();
     password.current= watch("signupPW");
@@ -27,7 +30,22 @@ function SignUp()
     let wathchConfirmNum = watch("confirmNum");
     let watchConfirmNumStr = '' +wathchConfirmNum;
     const confirmationNumber = watchConfirmNumStr;
- 
+
+    const [iconVisible,setIconVisible] = useState(false);
+    const [inputType,setInputType] = useState("");
+    const renderEyeIcon=()=>
+    {
+        console.log("rendered eyeIcon success")
+        if(iconVisible===false)
+        {   
+            return <EyeOff size="14"/>
+        }
+        else{
+            return <Eye size="14"/>
+        }
+    }
+    
+   
     // useEffect(()=>{
     //     localStorage.clear();
     // },[])
@@ -166,8 +184,24 @@ function SignUp()
                     draggable:true,
                 } );
             }
+    }
+
+    //eyeIcon Click했을때
+    const eyeIconSetter=()=>
+    {
+        if(iconVisible===false){
+            setInputType("password");
         }
-    // }
+        else{
+            setInputType("text")
+        }
+    }
+    
+    const eyeClicked=()=>
+    {
+        setIconVisible(!iconVisible);
+        eyeIconSetter();
+    }
 
     return(
       <Container>
@@ -218,24 +252,30 @@ function SignUp()
 
             <label htmlFor="signupPW" className="signupPW"> 🍀 비밀번호 </label>
             <div></div>
-            <Inputbox 
-                name="signupPW"
-                placeholder="비밀번호를 입력하세요" 
-                id="signupPW"
-                type="password"
-                {...register("signupPW",{
-                    required:true,
-                    maxLength:{value:6}
-                })}
-            >
-            </Inputbox>
-            {errors.signupPW && errors.signupPW.type==="required" && 
+
+            <div>
+                <InputGroup> 
+                    <Inputbox
+                        style={{width:'65%'}} 
+                        placeholder="비밀번호를 입력하세요"
+                        name="signupPW"
+                        id="signupPW"
+                        type={inputType}
+                           {...register("signupPW",{
+                               required:true,
+                               maxLength:{value:6}
+                        })}
+                    />
+                    <Button type="button" onClick={eyeClicked}>
+                        {renderEyeIcon()}
+                    </Button>
+                </InputGroup>
+                {errors.signupPW && errors.signupPW.type==="required" && 
                 <FormError message="⚠ 필수로 입력하셔야 합니다"/>}
-            
-            {errors.signupPW && errors.signupPW.type==="maxLength" &&
+                {errors.signupPW && errors.signupPW.type==="maxLength" &&
                 <FormError message="⚠ 비밀번호는 6글자 이하여야 합니다"/>}
-            <br/>
-            <br />
+            </div>
+            <br />            
 
             <label htmlFor="confirmPW" className="confirmPW"> 🍀 비밀번호 재확인 </label>
             <div></div>
@@ -318,7 +358,7 @@ function SignUp()
             </div>
                 
 
-            <Button type="submit">가입하기</Button>
+            <RegisterBtn type="submit">가입하기</RegisterBtn>
            
             </Contentbox>
 
@@ -407,9 +447,23 @@ const Inputbox = styled.input`
     max-width: 400px;
     display:inline;
 `
+const Button= styled.button`
+    border-radius: 3px;
+    border: 3px solid darkgrey;
+    width: 30px;
+    height: 35px;
+
+    text-align: center;
+    justify-items:center;
+
+    img{
+        width:15px;
+        height:15px;
+    }
+`
 
 
-const Button = styled.button`
+const RegisterBtn = styled.button`
     width: 50%;
     height: 48px;
     border-radius: 24px;
@@ -460,3 +514,55 @@ const PhoneButton = styled.button`
     }
     font-weight:800;
 `
+
+const InputField = styled.div`
+  display:inline-block;
+  width: 100%;
+
+  label {
+    display:block;
+    margin-bottom: 7px;
+    font-size:12px;
+    font-weight:300;
+    color:red;
+
+    img {
+      width: 13px;
+      vertical-align: middle;
+      margin-left: 3px;
+    }
+  }
+
+  span{
+    font-weight:600;
+    color:black;
+  }
+
+  input {
+    width:65%;
+    height:20px;
+    ::placeholder{color:grey;}
+    background:#F0F0F0;
+    right:30%;
+    
+    border-radius: 4px;
+    border: 1px solid white;
+    padding: 8px 30px;
+    font-size: 14px;
+    max-width: 400px;
+    display:inline;
+  }
+  
+  button {
+    padding:5px 20px;
+    font-weight:600;
+    color:white;
+    border:none;
+    outline: none;
+    border-radius: 5px;
+    background-color:grey
+  }
+  & + & {
+    margin-top: 15px;
+  }
+`;
