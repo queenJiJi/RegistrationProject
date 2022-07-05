@@ -5,6 +5,9 @@ import {ToastContainer,toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {useForm} from 'react-hook-form';
 import FormError from "../Components/FormError";
+import * as yup from 'yup';
+import { yupResolver } from "@hookform/resolvers/yup";
+
 
 
 const FindID = () =>
@@ -12,7 +15,22 @@ const FindID = () =>
     // const [name,setName] = useState("");
     // const [phone,setPhone] = useState("");
     const [find,setFind] = useState({}) //이름과 폰번호를 한번에 객체로 저장할 예정
-    const {register,formState:{errors},handleSubmit} = useForm();
+    
+    const phoneRegex=RegExp(
+        /^\(?([0-9]{3})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/
+    );
+
+    const schema = yup.object().shape({
+        name: yup.string()
+          .required("⚠ 필수로 입력하셔야 합니다"),
+        phone: yup.string()
+          .required("⚠ 필수로 입력하셔야 합니다")
+          .matches(phoneRegex, "⚠ 전화번호 양식에 맞지않습니다")
+    });
+
+    const {register,formState:{errors},handleSubmit} = useForm(
+        {resolver: yupResolver(schema)}
+    );
     const savedInfo= JSON.parse(localStorage.getItem('user'));
     
     useEffect(()=>{
@@ -109,16 +127,18 @@ const FindID = () =>
                 id="findName"
                 // value={name}
                 // onChange={nameHandler}
-                {...register("name",{
-                    required:true,
-                })}
+                {...register("name",
+                // {
+                //     required:true,
+                // }
+                )}
             >
             </Inputbox>
-            {errors.name && errors.name.type==="required" && 
-                <FormError message="⚠ 필수로 입력하셔야 합니다"/>}
+            {<FormError message={errors.name?.message}/>}>
+            {/* {errors.name && errors.name.type==="required" && 
+                <FormError message="⚠ 필수로 입력하셔야 합니다"/>} */}
             <br />
             
-            <br />
             <label htmlFor="findPhone" className="findPhone"> 🍀 전화번호 </label>
             <div></div>
             <Inputbox 
@@ -128,26 +148,34 @@ const FindID = () =>
                 // type="number"
                 // value={phone}
                 // onChange={phoneHandler}
-                {...register("phone",{
-                    required:true,
-                    pattern: /[0-9]/g,
-                    maxLength:{value:11}
-                })}
+                {...register("phone"
+                // ,{
+                //     required:true,
+                //     pattern: /[0-9]/g,
+                //     maxLength:{value:11}
+                // }
+                )}
             >
             </Inputbox>
-            {errors.phone && errors.phone.type==="required" && 
+            
+            {<FormError message={errors.phone?.message}/>}
+            {/* {errors.phone && errors.phone.type==="required" && 
                 <FormError message="⚠ 필수로 입력하셔야 합니다"/>}
             
             {errors.phone && errors.phone.type==="pattern" &&
                 <FormError message="⚠ 숫자만 입력 가능합니다"/>}
 
             {errors.phone && errors.phone.type==="maxLength" &&
-                <FormError message="⚠ 전화번호 양식에 맞지않습니다"/>}
+                <FormError message="⚠ 전화번호 양식에 맞지않습니다"/>} */}
            
             <br/>
-            <br />
             <Button type="submit">찾 기</Button>
             {/* <Popup /> */}
+                <br />
+            <div style={{textAlign:"right", 
+                        marginTop:"15px",}}>
+                <a href="/" style={{fontSize:"13px"}}>로그인하기</a>
+            </div>
             </Contentbox>
 
          </Wrapper>
@@ -170,7 +198,7 @@ const Container = styled.div`
     background: #fff;
     // padding: 80px 300px;    
     border-radius: 15px;
-    margin-top:30px;
+    margin-top:45px;
     background-color: #FCF9FA;
     width: 500px;
     height: 500px;
@@ -266,12 +294,13 @@ const Button = styled.button`
     border-radius: 24px;
     background: #F08080;
     color: #fff;
-    margin-top: 20px;
+    margin-top: 3px;
     // margin-left: 25%;
-    font-size:20px;
+    font-size:23px;
     border: 1px solid #BD5E7A;
     // position:relative;
     // right:210%;
+    font-family:"Jua";
     &:hover{
         background:#BD5E7A;
     }

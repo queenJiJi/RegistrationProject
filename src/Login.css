@@ -38,22 +38,28 @@ form {
    /* height: 20vmin; */
 }
 
-#warn{
+/* #warn{
   color:white;
   margin-top:-5px;
   display:block;
   margin-left: 30px;
+} */
+
+#warnSign{
+  color:tomato;
+  margin-top:-5px;
+  display:block;
+  margin-left: 35px;
 }
 
-#pwdWarn{
-  color:white;
+#pwdwarnSign{
+  color:tomato;
   margin-top:-38px;
   display:block;
-  margin-left: 30px;
+  margin-left: 35px;
 }
-
+/* 
 #warn::before{
-  /* display:inline; */
   content:"⚠ ";
   color:red;
   display:inline;
@@ -61,12 +67,11 @@ form {
 }
 
 #pwdWarn::before{
-  /* display:inline; */
   content:"⚠ ";
   color:red;
   display:inline;
   font-size:13px;
-}
+} */
 
 
  

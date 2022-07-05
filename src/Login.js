@@ -8,10 +8,26 @@ import './Login.css';
 import Font from 'react-font';
 import {Link} from 'react-router-dom';
 import styled from 'styled-components';
+import { useNavigate } from "react-router-dom";
+import * as yup from 'yup';
+import { yupResolver } from "@hookform/resolvers/yup";
+
 
 const Login = ()=> {
+  const navigate = useNavigate();
+  
+  const schema = yup.object().shape({
+      ID: yup.string()
+        .max(8,"⚠ 아이디를 올바르게 입력하세영")
+        .required("⚠ 필수로 입력하셔야 합니다"),
+      password:yup.string()
+        .required("⚠ 필수로 입력하셔야 합니다")
+  });
 
-  const {register,formState:{errors},watch,handleSubmit,setValue} = useForm();
+
+  const {register,formState:{errors},watch,handleSubmit,setValue} = useForm(
+      {resolver: yupResolver(schema)}
+  );
   const [checked,setChecked] = useState(false);
   const [ID,setID] = useState("");
   const [showmodal,setShowmodal]=useState(false);
@@ -115,13 +131,14 @@ const Login = ()=> {
   watch("ID");
   watch("password");
 
+  const savedId=JSON.parse(localStorage.getItem('loginInfo'));
   //새로고침 할 때 localstorage에 저장되어있던 ID값이 기억하기 해서 남아있을 것
   useEffect(()=>{
 
     // const savedId=JSON.parse(localStorage.getItem('loginInfo')); //굳이 이렇게 parse를 해서 object로 불러올 필요없음
 
     //key값 : loginInfo
-    const savedId=JSON.parse(localStorage.getItem('loginInfo'));
+    // const savedId=JSON.parse(localStorage.getItem('loginInfo'));
     // console.log('savedId : ', savedId);
     if(savedId)
     {
@@ -142,14 +159,33 @@ const Login = ()=> {
     saveID(info);
   }
 
+  const checkb4Edit =() => 
+  {
+    if(savedId===null)
+    {
+      alert("등록된 회원정보가 없습니다.\n회원가입을 해주시기 바랍니다");
+      return <a href="/"> Go back</a>
+    }
+    else
+    {
+      navigate('/edituserInfo');
+    }
+  }
+
   return (
   <div className="WholeContainer">
-    <Link to="/edituserInfo" 
+
+    <button  
+      type="button"
       style={{color:"lightgrey",
               position:'relative',
               left:"795px",
-              top: "18px"
-          }}>회원정보수정하기</Link>
+              top: "18px",
+              backgroundColor:'black',
+              textDecoration:'underline',
+              fontSize:"15px"
+            }}
+      onClick={checkb4Edit}>회원정보수정하기</button>
     <div className="App">
         <img src={briphylogo} className="App-logo" alt="logo" />
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -161,13 +197,16 @@ const Login = ()=> {
               placeholder="아이디를 입력하세요"
               id="ID"
               {...register("ID",
-              {
-                required:true,
-                maxLength:{value:8},
-              })}
+              // {
+              //   required:true,
+              //   maxLength:{value:8},
+              // }
+              )}
             />
-            {errors.ID && errors.ID.type==="required" && <p id="warn">필수로 입력하셔야 합니다.</p>}
-            {errors.ID && errors.ID.type==="maxLength" && <p id="warn">아이디를 올바르게 입력하세요</p>}
+            <div id="warnSign">{errors.ID?.message}</div>
+            {/* <p id="warn">{errors.ID?.message}</p> */}
+            {/* {/* {errors.ID && errors.ID.type==="required" && <p id="warn">{errors.ID.message}</p>} */}
+            {/* {errors.ID && errors.ID.type==="max" && <p id="warn">{errors.ID.message}</p>}  */}
             {/* 여기서 마지막 <p></p>부분은 항상 참일테니까(그냥 선언문이니까) 앞에서 모두true면 뜰것이고, 하나라도 false면 안뜰것임  */}
             <br />
             
@@ -179,14 +218,17 @@ const Login = ()=> {
                 placeholder="비밀번호를 입력하세요"
                 id="password"
 
-                {...register("password",{
-                    required:true
-                })} />
+                {...register("password",
+                // {
+                //     required:true
+                // }
+                )} />
               <Eyebtn type="button" onClick={eyeClicked}> 
                 {eye===true? <img src={eyepic} className="eyepic" alt="eyepic" /> :
                             <img src={closedEyepic} className="closedEyepic" alt="closedEyepic" />} 
               </Eyebtn>
-              {errors.password && errors.password.type==="required" && <p id="pwdWarn">필수로 입력하셔야 합니다.</p>}
+              <div id="pwdwarnSign">{errors.password?.message}</div>
+              {/* {errors.password && errors.password.type==="required" && <p id="pwdWarn">{errors.password.message}</p>} */}
             </div>
           </div>
           <br />
@@ -254,7 +296,7 @@ const Eyebtn = styled.button`
 
 const DownWrapper =styled.div`
   // background:peru;
-  margin-top:-20px;
+  margin-top:-7px;
 `
 
 export default Login;

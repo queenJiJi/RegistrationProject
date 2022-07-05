@@ -11,6 +11,8 @@ import openEye from './Components/eye.png'
 import closedeye from './Components/closedeye.png'
 import TogglePW from "./Components/TogglePW";
 import {Eye,EyeOff} from 'react-feather';
+import * as yup from 'yup';
+import { yupResolver } from "@hookform/resolvers/yup";
 
 function SignUp() 
 {   
@@ -18,7 +20,41 @@ function SignUp()
     // navigate('/confirmPage');
     
     const [user,setUser] = useState() 
-    const {register,watch,formState:{errors},handleSubmit,control} = useForm();
+
+    const phoneRegex=RegExp(
+        /^\(?([0-9]{3})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/
+    );
+
+    const confirmNumRegex=RegExp(/^[0-9]{4}$/);
+
+    const schema = yup.object().shape({
+        signupName: yup.string()
+            .required("⚠ 필수로 입력하셔야 합니다")
+            .max(5,"⚠ 이름은 5글자 이하여야 합니다"),
+        signupID: yup.string()
+            .required("⚠ 필수로 입력하셔야 합니다")
+            .max(8,"⚠ 아이디는 8글자 이하여야 합니다"),
+        signupPW: yup.string()
+            .required("⚠ 필수로 입력하셔야 합니다")
+            .matches(
+                /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
+                "⚠ 비밀번호는 최소8글자,하나의 대문자,숫자,기호가 포함되어야 합니다"
+                // "Password must contain at least 8 characters, one uppercase, one number and one special case character"
+            ),
+        confirmPW: yup.string()
+            .required("⚠ 필수로 입력하셔야 합니다")
+            .oneOf([yup.ref('signupPW'), null], "⚠ 비밀번호가 일치하지 않습니다"),
+        signupPhone: yup.string()
+            .required("⚠ 필수로 입력하셔야 합니다")
+            .matches(phoneRegex, "⚠ 전화번호 양식에 맞지않습니다"),
+        confirmNum: yup.string()
+            .required("⚠ 필수로 입력하셔야 합니다")
+            .matches(confirmNumRegex, "⚠ 인증번호는 4자리 숫자만 가능합니다")
+    });
+
+    const {register,watch,formState:{errors},handleSubmit,control} = useForm(
+        {resolver: yupResolver(schema)}
+    );
     const [ok,setOk] = useState(false);
     const password=useRef();
     password.current= watch("signupPW");
@@ -35,13 +71,13 @@ function SignUp()
     const [inputType,setInputType] = useState("");
     const renderEyeIcon=()=>
     {
-        console.log("rendered eyeIcon success")
+        // console.log("rendered eyeIcon success")
         if(iconVisible===false)
         {   
-            return <EyeOff size="14"/>
+            return <EyeOff width="14" height="14" viewBox="0 0 24 19"/>
         }
         else{
-            return <Eye size="14"/>
+            return <Eye width="14" height="14" viewBox="0 0 24 19"/>
         }
     }
     
@@ -68,7 +104,7 @@ function SignUp()
     //버튼 클릭시(= form이 submit이 될때) safeuser 호출
     const clickHandler=(val)=>{
         // console.log('clickHandler')
-        console.log("ok", ok)
+        // console.log("ok", ok)
         if(isObjEmpty(errors)&&ok===true){ //error가 없을 때
             const elem = { 
                 name: val.signupName,
@@ -218,17 +254,19 @@ function SignUp()
                 name="signupName"
                 placeholder="이름을 입력하세요" 
                 id="signupName"
-                {...register("signupName",{
-                    required:true,
-                    maxLength:{value:5}
-                })}
+                {...register("signupName",
+                // {
+                //     required:true,
+                //     maxLength:{value:5}
+                // }
+                )}
             >
             </Inputbox>
-            {errors.signupName && errors.signupName.type==="required" && 
+            {<FormError message={errors.signupName?.message}/>}
+            {/* {errors.signupName && errors.signupName.type==="required" && 
                 <FormError message="⚠ 필수로 입력하셔야 합니다"/>}
             {errors.signupName && errors.signupName.type==="maxLength" && 
-                <FormError message="⚠ 이름은 5글자 이하여야 합니다"/>}
-            <br />
+                <FormError message="⚠ 이름은 5글자 이하여야 합니다"/>} */}
             <br />
 
             <label htmlFor="signupID" className="signupID"> 🍀 아이디 </label>
@@ -237,17 +275,19 @@ function SignUp()
                 name="signupID"
                 placeholder="아이디를 입력하세요" 
                 id="signupID"
-                {...register("signupID",{
-                    required:true,
-                    maxLength:{value:8}
-                })}
+                {...register("signupID",
+                // {
+                //     required:true,
+                //     maxLength:{value:8}
+                // }
+                )}
             >
             </Inputbox>
-            {errors.signupID && errors.signupID.type==="required" && 
+            {<FormError message={errors.signupID?.message}/>}
+            {/* {errors.signupID && errors.signupID.type==="required" && 
                 <FormError message="⚠ 필수로 입력하셔야 합니다"/>}
             {errors.signupID && errors.signupID.type==="maxLength" && 
-                <FormError message="⚠ 아이디는 8글자 이하여야 합니다"/>}
-            <br />
+                <FormError message="⚠ 아이디는 8글자 이하여야 합니다"/>} */}
             <br />
 
             <label htmlFor="signupPW" className="signupPW"> 🍀 비밀번호 </label>
@@ -261,19 +301,23 @@ function SignUp()
                         name="signupPW"
                         id="signupPW"
                         type={inputType}
-                           {...register("signupPW",{
-                               required:true,
-                               maxLength:{value:6}
-                        })}
+                           {...register("signupPW",
+                        //    {
+                        //        required:true,
+                        //        maxLength:{value:6}
+                        //      }
+                        )}
                     />
                     <Button type="button" onClick={eyeClicked}>
                         {renderEyeIcon()}
                     </Button>
+                {<FormError message={errors.signupPW?.message}/>}
                 </InputGroup>
-                {errors.signupPW && errors.signupPW.type==="required" && 
+                {/* <WarnSign>{errors.signupPW?.message}</WarnSign> */}
+                {/* {errors.signupPW && errors.signupPW.type==="required" && 
                 <FormError message="⚠ 필수로 입력하셔야 합니다"/>}
                 {errors.signupPW && errors.signupPW.type==="maxLength" &&
-                <FormError message="⚠ 비밀번호는 6글자 이하여야 합니다"/>}
+                <FormError message="⚠ 비밀번호는 6글자 이하여야 합니다"/>} */}
             </div>
             <br />            
 
@@ -284,20 +328,22 @@ function SignUp()
                 placeholder="비밀번호를 다시 입력하세요" 
                 id="confirmPW"
                 type="password"
-                {...register("confirmPW",{
-                    required:true,
-                    validate: (value)=>((value) === password.current)
-                })}
+                {...register("confirmPW",
+                // {
+                //     required:true,
+                //     validate: (value)=>((value) === password.current)
+                // }
+                )}
             >
             </Inputbox>
-            {errors.confirmPW && errors.confirmPW.type==="required" && 
+            {<FormError message={errors.confirmPW?.message}/>}
+
+            {/* {errors.confirmPW && errors.confirmPW.type==="required" && 
                 <FormError message="⚠ 필수로 입력하셔야 합니다"/>}
             
             {errors.confirmPW && errors.confirmPW.type==="validate" &&
-                <FormError message="⚠ 비밀번호가 일치하지 않습니다"/>}
+                <FormError message="⚠ 비밀번호가 일치하지 않습니다"/>} */}
             <br/>
-            <br />
-
 
             <label htmlFor="signupGender" className="signupGender"> 🍀 성별 </label>
             <div>
@@ -322,38 +368,47 @@ function SignUp()
                 type="number"
 
                 // value={phone}
-                {...register("signupPhone",{
-                    required:true,
-                    pattern: /[0-9]/g,
-                    // minLength:{value:11}
-                    // /[0-9]/g
-                })}
+                {...register("signupPhone",
+                // {
+                //     required:true,
+                //     pattern: /[0-9]/g,
+                //     // minLength:{value:11}
+                //     // /[0-9]/g
+                // }
+                )}
             >
             </Phonebox>
             {"\u00a0\u00a0"}
             <PhoneButton type='button' onClick={confirmAlert}>인증번호받기</PhoneButton>
-            {errors.signupPhone && errors.signupPhone.type==="required" && 
-                <FormError message="⚠ 필수로 입력하셔야 합니다"/>}
+            {<FormError message={errors.signupPhone?.message}/>}
+            {/* {errors.signupPhone && errors.signupPhone.type==="required" && 
+                <FormError message="⚠ 필수로 입력하셔야 합니다"/>} */}
             {/* {errors.signupPhone && errors.signupPhone.type==="minLength" &&
                 <FormError message="⚠ 전화번호를 올바르게 입력해주세요"/>} */}
-                <div></div>
+                {/* <div></div> */}
+                <br />
+            
             <Phonebox 
                 name="confirmNum"
                 placeholder="인증번호를 입력하세요" 
                 id="confirmNum"
-                type="number"
-                {...register("confirmNum",{
-                    required:true,
-                    pattern: /[0-9]/g,
-                    type:"number"
-                })}>
+                // type="number"
+                {...register("confirmNum",
+                // {
+                //     required:true,
+                //     pattern: /[0-9]/g,
+                //     type:"number"
+                // }
+                )}>
             </Phonebox> 
             {"\u00a0\u00a0"}
             <PhoneButton type='button' onClick={confirmNumOk}>확인</PhoneButton>
-            {errors.confirmNum && errors.confirmNum.type==="required" && 
+            <FormError message={errors.confirmNum?.message} />
+
+            {/* {errors.confirmNum && errors.confirmNum.type==="required" && 
                 <FormError message="⚠ 필수로 입력하셔야 합니다"/>}
             {errors.confirmNum && errors.confirmNum.type==="pattern" &&
-                <FormError message="⚠ 숫자만 입력 가능합니다"/>}
+                <FormError message="⚠ 숫자만 입력 가능합니다"/>} */}
             <br />
             </div>
                 
@@ -380,10 +435,10 @@ const Container = styled.div`
     transform: translate(-50%,-50%);
     background: #fff;
     border-radius: 15px;
-    margin-top:30px;
+    margin-top:66px;
     background-color: #FCF9FA;
     width: 600px;
-    height: 850px;
+    height: 880px;
 `
 
 const Wrapper = styled.div`
@@ -401,7 +456,7 @@ const Wrapper = styled.div`
 `
 
 const Contentbox = styled.div`
-    height: 300px;
+    height: 650px;
     margin-top:20px;
     text-align:center;
     padding: 17px 30px;
@@ -565,4 +620,11 @@ const InputField = styled.div`
   & + & {
     margin-top: 15px;
   }
-`;
+`
+
+const WarnSign = styled.div`
+  color:tomato;
+  font-size:13px;
+  position:relative;
+  left:3px;
+`

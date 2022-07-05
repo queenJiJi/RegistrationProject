@@ -9,17 +9,45 @@ import * as React from 'react';
 import Font from 'react-font';
 import {Eye,EyeOff} from 'react-feather';
 import {InputGroup} from 'reactstrap';
-
+import * as yup from 'yup';
+import { yupResolver } from "@hookform/resolvers/yup";
 
 
 function EdituserInfo()
 {
   
-  const navigate = useNavigate();
+    const navigate = useNavigate();
     // navigate('/confirmPage');
     
     const [user,setUser] = useState() 
-    const {register,watch,formState:{errors},handleSubmit} = useForm();
+
+    const phoneRegex=RegExp(
+        /^\(?([0-9]{3})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/
+    );
+    const schema = yup.object().shape({
+        editName: yup.string()
+          .required("⚠ 필수로 입력하셔야 합니다")
+          .max(5,"⚠ 이름은 5글자 이하여야 합니다"),
+        editID: yup.string()
+        .required("⚠ 필수로 입력하셔야 합니다")
+        .max(8,"⚠ 아이디는 8글자 이하여야 합니다"),
+        editPW: yup.string()
+        .required("⚠ 필수로 입력하셔야 합니다")
+        .matches(
+            /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/,
+            "⚠ 비밀번호는 최소8글자,하나의 대문자,숫자,기호가 포함되어야 합니다"
+            // "Password must contain at least 8 characters, one uppercase, one number and one special case character"
+        ),
+        confirmPW: yup.string()
+        .required("⚠ 필수로 입력하셔야 합니다")
+        .oneOf([yup.ref('editPW'), null], "⚠ 비밀번호가 일치하지 않습니다"),
+        editPhone: yup.string()
+          .required("⚠ 필수로 입력하셔야 합니다")
+          .matches(phoneRegex, "⚠ 전화번호 양식에 맞지않습니다")
+    });
+    const {register,watch,formState:{errors},handleSubmit} = useForm(
+        {resolver: yupResolver(schema)}
+    );
     // const [ok,setOk] = useState(false);
     const password=useRef();
     password.current= watch("editPW");
@@ -33,10 +61,10 @@ function EdituserInfo()
         console.log("rendered eyeIcon success")
         if(iconVisible===false)
         {   
-            return <EyeOff size="14"/>
+            return <EyeOff width="14" height="14" viewBox="0 0 24 19  "/>
         }
         else{
-            return <Eye size="14"/>
+            return <Eye width="14" height="14" viewBox="0 0 24 19"/>
         }
     }
 
@@ -74,15 +102,15 @@ function EdituserInfo()
     }
 
     //localStorage에서 정보 불러오기
-    const getUser=()=>
-    { 
-      console.log("userInfois:",getuserInfo);
-    }
+    // const getUser=()=>
+    // { 
+    //   console.log("userInfois:",getuserInfo);
+    // }
 
-    useEffect(
-      ()=>{
-        getUser();
-      },[]);
+    // useEffect(
+    //   ()=>{
+    //     if(isObjEmpty(getuserInfo)){console.log("something went wrong")}
+    //   },[]);
 
     //버튼 클릭시(= form이 submit이 될때) safeuser 호출
     const clickHandler=(val)=>{
@@ -131,6 +159,8 @@ function EdituserInfo()
             }
         }
     // }
+    
+
     const [userData,setUserdata] = useState(
     { 
         name:getuserInfo.name,
@@ -157,17 +187,19 @@ function EdituserInfo()
                 id="editName"
                 defaultValue={userData.name}
                 // onChange={e=>handleChange(e)}
-                {...register("editName",{
-                    // required:true,
-                    maxLength:{value:5}
-                })}
+                {...register("editName",
+                // {
+                //     // required:true,
+                //     maxLength:{value:5}
+                // }
+                )}
             >
             </Inputbox>
+            {<FormError message={errors.editName?.message}/>}
             {/* {errors.editName && errors.editName.type==="required" && 
                 <FormError message="⚠ 필수로 입력하셔야 합니다"/>} */}
-            {errors.editName && errors.editName.type==="maxLength" && 
-                <FormError message="⚠ 이름은 5글자 이하여야 합니다"/>}
-            <br />
+            {/* {errors.editName && errors.editName.type==="maxLength" && 
+                <FormError message="⚠ 이름은 5글자 이하여야 합니다"/>} */}
             <br />
 
             <label htmlFor="editID" className="editID"> 🍀 아이디 </label>
@@ -178,17 +210,19 @@ function EdituserInfo()
                 id="editID"
                 defaultValue={userData.id}
 
-                {...register("editID",{
-                    // required:true,
-                    maxLength:{value:8}
-                })}
+                {...register("editID",
+                // {
+                //     // required:true,
+                //     maxLength:{value:8}
+                // }
+                )}
             >
             </Inputbox>
+            {<FormError message={errors.editID?.message}/>}
             {/* {errors.editID && errors.editID.type==="required" && 
                 <FormError message="⚠ 필수로 입력하셔야 합니다"/>} */}
-            {errors.editID && errors.editID.type==="maxLength" && 
-                <FormError message="⚠ 아이디는 8글자 이하여야 합니다"/>}
-            <br />
+            {/* {errors.editID && errors.editID.type==="maxLength" && 
+                <FormError message="⚠ 아이디는 8글자 이하여야 합니다"/>} */}
             <br />
 
             <label htmlFor="editPW" className="editPW"> 🍀 비밀번호 </label>
@@ -201,19 +235,22 @@ function EdituserInfo()
                         name="editPW"
                         id="editPW"
                         type={inputType}
-                           {...register("editPW",{
-                               required:true,
-                               maxLength:{value:6}
-                        })}
+                           {...register("editPW",
+                        //    {
+                        //        required:true,
+                        //        maxLength:{value:6}
+                        //     }
+                        )}
                     />
                     <Button type="button" onClick={eyeClicked}>
                         {renderEyeIcon()}
                     </Button>
                 </InputGroup>
-                {errors.editPW && errors.editPW.type==="required" && 
+                {<FormError message={errors.editPW?.message}/>}
+                {/* {errors.editPW && errors.editPW.type==="required" && 
                 <FormError message="⚠ 필수로 입력하셔야 합니다"/>}
                 {errors.editPW && errors.editPW.type==="maxLength" &&
-                <FormError message="⚠ 비밀번호는 6글자 이하여야 합니다"/>}
+                <FormError message="⚠ 비밀번호는 6글자 이하여야 합니다"/>} */}
             </div>
             <br />            
 
@@ -225,18 +262,21 @@ function EdituserInfo()
                 id="confirmPW"
                 type="password"
 
-                {...register("confirmPW",{
-                    required:true,
-                    validate: (value)=>((value) === password.current)
-                })}
+                {...register("confirmPW",
+                // {
+                //     required:true,
+                //     validate: (value)=>((value) === password.current)
+                // }
+                )}
             >
             </Inputbox>
-            {errors.confirmPW && errors.confirmPW.type==="required" && 
+            {<FormError message={errors.confirmPW?.message}/>}
+
+            {/* {errors.confirmPW && errors.confirmPW.type==="required" && 
                 <FormError message="⚠ 필수로 입력하셔야 합니다"/>}
             {errors.confirmPW && errors.confirmPW.type==="validate" &&
-                <FormError message="⚠ 비밀번호가 일치하지 않습니다"/>}
+                <FormError message="⚠ 비밀번호가 일치하지 않습니다"/>} */}
             <br/>
-            <br />
 
 
             <label htmlFor="editGender" className="editGender"> 🍀 성별 </label>
@@ -259,17 +299,21 @@ function EdituserInfo()
                 name="editPhone"
                 placeholder="전화번호를 입력하세요" 
                 id="editPhone"
-                type="number"
+                // type="number"
                 defaultValue={userData.phone}
-                {...register("editPhone",{
-                    // required:true,
-                    pattern: /[0-9]/g,
-                    // minLength:{value:11}
-                    // /[0-9]/g
-                })}
+                {...register("editPhone",
+                // {
+                //     // required:true,
+                //     pattern: /[0-9]/g,
+                //     // minLength:{value:11}
+                //     // /[0-9]/g
+                // }
+                )}
             >
             </Inputbox>
             {"\u00a0\u00a0"}
+            {<FormError message={errors.editPhone?.message}/>}
+
            
                 <div></div>
             </div>
@@ -300,7 +344,7 @@ const Container = styled.div`
     margin-top:30px;
     background-color: #FCF9FA;
     width: 600px;
-    height: 850px;
+    height: 780px;
 `
 
 const Wrapper = styled.div`

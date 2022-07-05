@@ -5,12 +5,31 @@ import {ToastContainer,toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {useForm} from 'react-hook-form';
 import FormError from "../Components/FormError";
+import * as yup from 'yup';
+import { yupResolver } from "@hookform/resolvers/yup";
 
 
 const FindPW = () =>
 {
     const [find,setFind] = useState({}) //이름과 폰번호를 한번에 객체로 저장할 예정
-    const {register,formState:{errors},handleSubmit} = useForm();
+
+    const phoneRegex=RegExp(
+        /^\(?([0-9]{3})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/
+    );
+
+    const schema = yup.object().shape({
+        findID: yup.string()
+          .required("⚠ 필수로 입력하셔야 합니다"),
+        name: yup.string()
+          .required("⚠ 필수로 입력하셔야 합니다"),
+        phone: yup.string()
+          .required("⚠ 필수로 입력하셔야 합니다")
+          .matches(phoneRegex, "⚠ 전화번호 양식에 맞지않습니다")
+    });
+
+    const {register,formState:{errors},handleSubmit} = useForm(
+        {resolver: yupResolver(schema)}
+    );
     const savedInfo= JSON.parse(localStorage.getItem('user'));
     
     useEffect(()=>{
@@ -71,7 +90,7 @@ const FindPW = () =>
        
             else{
                 // Popup.alert("Sorry, We couldn't find your ID!!")
-                toast.error("해당 비밀번호를 찾을 수 없습니다",
+                toast.error("해다 비밀번호를 찾을 수 없습니다",
                 {
                     autoClose:1000,
                     closeOnClick:true,
@@ -99,15 +118,16 @@ const FindPW = () =>
                 name="findID"
                 placeholder="아이디를 입력하세요" 
                 id="findID"
-                {...register("findID",{
-                    required:true,
-                })}
+                {...register("findID",
+                // {
+                //     required:true,
+                // }
+                )}
             >
             </Inputbox>
-            {errors.findID && errors.findID.type==="required" && 
-                <FormError message="⚠ 필수로 입력하셔야 합니다"/>}
-            <br />
-            
+            {<FormError message={errors.findID?.message} />}
+            {/* {errors.findID && errors.findID.type==="required" && 
+                <FormError message="⚠ 필수로 입력하셔야 합니다"/>} */}
             <br />
 
             <label htmlFor="findName" className="findName"> 🍀 이름 </label>
@@ -116,44 +136,51 @@ const FindPW = () =>
                 name="name"
                 placeholder="이름을 입력하세요" 
                 id="findName"
-                {...register("name",{
-                    required:true,
-                })}
+                {...register("name",
+                // {
+                //     required:true,
+                // }
+                )}
             >
             </Inputbox>
-            {errors.name && errors.name.type==="required" && 
-                <FormError message="⚠ 필수로 입력하셔야 합니다"/>}
+            {<FormError message={errors.name?.message} />}
+            {/* {errors.name && errors.name.type==="required" && 
+                <FormError message="⚠ 필수로 입력하셔야 합니다"/>} */}
             <br />
             
-            <br />
             <label htmlFor="findPhone" className="findPhone"> 🍀 전화번호 </label>
             <div></div>
             <Inputbox 
                 name="phone"
                 placeholder="전화번호를 입력하세요" 
                 id="findPhone"
-                {...register("phone",{
-                    required:true,
-                    pattern: /[0-9]/g,
-                    maxLength:{value:11}
-                })}
+                {...register("phone",
+                // {
+                //     required:true,
+                //     pattern: /[0-9]/g,
+                //     maxLength:{value:11}
+                // }
+                )}
             >
             </Inputbox>
-            {errors.phone && errors.phone.type==="required" && 
+            {<FormError message={errors.phone?.message} />}
+            {/* {errors.phone && errors.phone.type==="required" && 
                 <FormError message="⚠ 필수로 입력하셔야 합니다"/>}
             
             {errors.phone && errors.phone.type==="pattern" &&
                 <FormError message="⚠ 숫자만 입력 가능합니다"/>}
 
             {errors.phone && errors.phone.type==="maxLength" &&
-                <FormError message="⚠ 전화번호 양식에 맞지않습니다"/>}
+                <FormError message="⚠ 전화번호 양식에 맞지않습니다"/>} */}
            
             <br/>
-            <br />
             <Button type="submit">찾 기</Button>
             {/* <Popup /> */}
+            <div style={{textAlign:"right", 
+                        marginTop:"15px",}}>
+                <a href="/" style={{fontSize:"13px"}}>로그인하기</a>
+            </div>
             </Contentbox>
-
          </Wrapper>
          </form>
              <ToastContainer />
@@ -172,7 +199,7 @@ const Container = styled.div`
     transform: translate(-50%,-50%);
     background: #fff;
     border-radius: 15px;
-    margin-top:66px;
+    margin-top:90px;
     background-color: #FCF9FA;
     width: 500px;
     height: 595px;
@@ -244,10 +271,11 @@ const Button = styled.button`
     border-radius: 24px;
     background: #F08080;
     color: #fff;
-    margin-top: 20px;
-    font-size:20px;
+    margin-top:0px;
+    font-size:23px;
     border: 1px solid #BD5E7A;
     &:hover{
         background:#BD5E7A;
     }
+    font-family:"Jua";
 `
