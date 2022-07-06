@@ -15,7 +15,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 
 const Login = ()=> {
   const navigate = useNavigate();
-  
+
   const schema = yup.object().shape({
       ID: yup.string()
         .max(8,"⚠ 아이디를 올바르게 입력하세영")
@@ -179,8 +179,8 @@ const Login = ()=> {
       type="button"
       style={{color:"lightgrey",
               position:'relative',
-              left:"795px",
-              top: "18px",
+              left:"880px",
+              top: "28px",
               backgroundColor:'black',
               textDecoration:'underline',
               fontSize:"15px"
