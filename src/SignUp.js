@@ -239,11 +239,17 @@ function SignUp()
         eyeIconSetter();
     }
 
+    //닫기 아이콘을 눌렀을 시
+    const closeHandler=()=>{
+        navigate('/');
+    }
+
     return(
       <Container>
            
         <form onSubmit={handleSubmit(clickHandler)} >
          <Wrapper>
+            <Closeicon type="button"className="closeIcon" onClick={closeHandler}></Closeicon>
             <div className="signup">Sign Up</div>
 
             <Contentbox>
@@ -452,6 +458,29 @@ const Wrapper = styled.div`
         color:black;
         text-align:center;
         margin-top:30px;}
+    }
+`
+
+const Closeicon = styled.button`
+    position: absolute;
+    top: -14px;
+    right: 30px;
+    width: 30px;
+    display: block;
+    overflow: hidden;
+    height: 30px;
+    -webkit-transition: all 200ms linear;
+    transition: all 200ms linear;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 36px 36px;
+    background-image: url('http://www.ivang-design.com/svg-load/portfolio/close.svg');
+    cursor: pointer;
+    z-index: 11;
+    background-color: black;
+
+    &:hover{
+        transform: rotate(90deg);
     }
 `
 
